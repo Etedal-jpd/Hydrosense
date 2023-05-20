@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "483531068384",
+    "project_id": "watersavvy-c4d3c",
+    "storage_bucket": "watersavvy-c4d3c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:483531068384:android:ca6f10340a3a7e8af01185",
+        "android_client_info": {
+          "package_name": "com.example.training1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "483531068384-678mf4j0vda63uho67bg1kbv0jfhljgr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.training1",
+            "certificate_hash": "a190c97bdbab74669ac816b36996b73192d1289f"
+          }
+        },
+        {
+          "client_id": "483531068384-jn54fe3k53mk8fhti8ftfdv1v5pe1a2k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuxNMenYYgWEHr7EFXmboNO0o8-liZKMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "483531068384-jn54fe3k53mk8fhti8ftfdv1v5pe1a2k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
