@@ -4,6 +4,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:training1/logg/CreatAccount.dart';
+import 'package:training1/logg/forgetpassword.dart';
 import 'package:training1/logg/hompage.dart';
 import 'package:training1/logg/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -69,11 +70,11 @@ class _LoginState extends State<Login> {
       crossAxisAlignment: CrossAxisAlignment.start,
       // ignore: prefer_const_literals_to_create_immutables
       children: [
-        const SizedBox(height: 100),  
-       Container(padding: EdgeInsets.all(0),child: Image.asset("images/asset/HH-logo.png")),
-const SizedBox(height:90),
-const Text("Let's Watering With Us ",style:TextStyle(fontSize:20,fontWeight: FontWeight.w700,color: Color.fromARGB(221, 14, 13, 13)),),
-const SizedBox(height: 30),
+        const SizedBox(height:23),
+       Container(width:550,padding: EdgeInsets.all(0),child: Image.asset("images/asset/11-removebg-preview.png")),
+const SizedBox(height:20),
+const Text("Let's Watering With Us ",style:TextStyle(fontSize:20,fontWeight: FontWeight.w700,color: Color.fromARGB(255, 30, 82, 30)),),
+const SizedBox(height:10),
        
        Center(
          child: TextFormField(
@@ -104,10 +105,12 @@ const SizedBox(height: 35),
              ),
                ),
         ),
-        Center(child: TextButton(onPressed:(){}, child:const Text(' Forget my password',style: TextStyle(color:  Color.fromARGB(221, 48, 45, 45),fontSize:12,letterSpacing: 1,fontWeight: FontWeight.w600),))) ,
+
+        Center(child: TextButton(
+            onPressed:()=>Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ResetPasswordScreen())), child:const Text(' Forget my password',style: TextStyle(color:Color.fromARGB(221, 48, 45, 45),fontSize:12,letterSpacing: 1,fontWeight: FontWeight.w600),))) ,
         const SizedBox(height: 35),
         Center(child: TextButton(onPressed:(){Navigator.of(context).pushNamed("creat");},child:const Text('Creat An Account',style: TextStyle(color: Color.fromARGB(221, 48, 45, 45),fontSize: 18,letterSpacing: 1,fontWeight: FontWeight.w600),))) ,
-      ],
+       ],
 
       ) )))
       

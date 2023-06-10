@@ -100,12 +100,18 @@ addData ()async{
       crossAxisAlignment: CrossAxisAlignment.start,
       // ignore: prefer_const_literals_to_create_immutables
       children: [
-const SizedBox(height:40),
-       Container(padding: EdgeInsets.all(5),
-        child: Container(padding: EdgeInsets.all(0),child: Image.asset("images/asset/HH-logo.png"),width:200,),),
-const SizedBox(height:10),
-       Center(child: const Text(" Request to Creat New Account",style:TextStyle(fontSize:20,fontWeight: FontWeight.w700,color: Color.fromARGB(221, 48, 45, 45)),)),
-const SizedBox(height: 40),
+const SizedBox(height:60),
+
+       Row(
+         children: [
+
+           Container(padding: EdgeInsets.all(0),
+            child: Container(padding: EdgeInsets.all(0),child: Image.asset("images/asset/11preview.png"),width:100,),),
+             Center(child: const Text(" Request \n to Creat New Account",style:TextStyle(fontSize:20,fontWeight: FontWeight.w700,color: Color.fromARGB(221, 48, 45, 45)),)),
+         ],
+       ),
+      
+const SizedBox(height: 30),
        Center(
            child: TextFormField(
             validator: (value) => value!.isEmpty?'Username can\'t be empty':null,
@@ -155,7 +161,7 @@ const SizedBox(height: 10),
 const SizedBox(height: 10),
        Center(
          child: TextFormField(
-           validator: (value) => value!.isEmpty?'Phone number can\'t be empty':null,
+           validator: (value) => value!.length<10 || value!.length>10?'phone number invalid' :null,
            onSaved: (val) => phone = val!,
            style: TextStyle(color: Color.fromARGB(255, 52, 51, 51)),
            decoration: InputDecoration(border: OutlineInputBorder( borderSide:BorderSide(width : 1.0)),prefixIcon: Icon(Icons.call,color:Color.fromARGB(255, 47, 45, 45),),hintText: "phone umber"),

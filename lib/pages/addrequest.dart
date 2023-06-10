@@ -71,7 +71,7 @@ await userRef.child('request').set({
 const SizedBox(height: 10),
            Text("Title",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),),const SizedBox(height: 10),
             Container(padding: EdgeInsets.only(bottom: 10),child: DropdownButton(hint: Text("problem type"),iconEnabledColor: Colors.green,iconSize: 20,itemHeight: 50,isExpanded: true ,
-            items: ["sensors","pumps","soil type","other"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(), 
+            items: ["sensors","pumps","Hydroponic system","other"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
             onChanged: (value) { setState(() {
               selectproblem=value;
             }); },

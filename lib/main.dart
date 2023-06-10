@@ -6,6 +6,7 @@ import 'package:training1/logg/CreatAccount.dart';
 import 'package:training1/logg/hompage.dart';
 import 'package:training1/logg/login.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:training1/pages/aboutas.dart';
 import 'package:training1/pages/addrequest.dart';
 import 'package:training1/pages/page2/page22.dart';
 import 'package:training1/pages/page33/calendar_tile.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner:false,
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.green,),
       routes: {
@@ -38,6 +40,7 @@ class MyApp extends StatelessWidget {
         'request':(context)=>addReq(),
         'page3':(context)=>requests(),
         'calender':(context) => page2(),
+      'about':(context) =>Aboutus(),
       },
       home: islog==false?Login():Homepage(),
     );

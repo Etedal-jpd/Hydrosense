@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:training1/pages/page33/calendar_tile.dart';
 import 'package:training1/pages/page1.dart';
 import 'package:training1/pages/page2/page22.dart';
+import 'package:training1/pages/page4.dart';
 
 
 
@@ -20,7 +21,7 @@ class _HomepageState extends State<Homepage> {
   CurrentWeatherPage(),
   requests(),
   page2(),
-    Text("data"),
+  SwitchApp(),
 
 
 ];
@@ -37,10 +38,10 @@ class _HomepageState extends State<Homepage> {
             select =index;
           }); 
           },
-          items:const [ BottomNavigationBarItem(icon: Icon(Icons.home),label: 'home'),
-            BottomNavigationBarItem(icon: Icon(Icons.notification_add),label: 'notification'),
-            BottomNavigationBarItem(icon: Icon(Icons.new_label),label: 'new'),
-            BottomNavigationBarItem(icon: Icon(Icons.rate_review),label: 'rate'),]
+          items:const [ BottomNavigationBarItem(icon: Icon(Icons.home),label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.notification_add),label: 'Notification'),
+            BottomNavigationBarItem(icon: Icon(Icons.new_label),label: 'Timer'),
+            BottomNavigationBarItem(icon: Icon(Icons.restart_alt),label: 'Reset'),]
 
        ), 
        body:Center(child: child[select])

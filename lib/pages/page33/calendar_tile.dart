@@ -52,7 +52,7 @@ _ss() {
  List user=[];
 
 
-retrieved() async {
+/*retrieved() async {
   try {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "";
 DatabaseReference userRef = FirebaseDatabase.instance.reference().child("users").child(userId);
@@ -68,16 +68,30 @@ DatabaseReference userRef = FirebaseDatabase.instance.reference().child("users")
   } catch (error) {
     print("Error retrieving data: $error");
   }
+}*/
+
+ retrieved() async{
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+     DatabaseReference userRef = FirebaseDatabase.instance.reference().child("users").child(userId);
+     final snapshot = await userRef.get();
+if (snapshot.exists) {
+    user.add(snapshot.value);
+     _ss();
+     updateText();
+     print("Data retrieved successfully");
+} else {
+    print('No data available.');
 }
+
+  }
 
 @override
 void initState() {
   super.initState();
-  setState(() {
-retrieved() ;
-  });
-
+  retrieved() ;
 }
+
+
  updat()async{
  try {
   DatabaseReference ref = FirebaseDatabase.instance.ref();
@@ -161,7 +175,7 @@ _StartDate(){
                color:    Color.fromARGB(255, 219, 236, 213),
                boxShadow: [const BoxShadow(color: Color.fromARGB(255, 59, 164, 63),blurRadius: 10,offset: Offset(0, 0))] ,   
                borderRadius: BorderRadius.circular(10),
-               image: const DecorationImage( fit: BoxFit.fill,image: AssetImage("images/asset/logo-512x512-1.png"))
+              image: const DecorationImage(scale:0.02 ,image: AssetImage("images/asset/11preview.png")),
             ),
            
            )

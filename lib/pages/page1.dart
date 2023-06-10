@@ -21,17 +21,36 @@ class _CurrentWeatherPageState extends State<CurrentWeatherPage> {
   late Weather _weather;
 List user=[];
 
-
 retrieved() async {
   try {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "";
-DatabaseReference userRef = FirebaseDatabase.instance.reference().child("users").child(userId);
+DatabaseReference userRef = FirebaseDatabase.instance.reference().child("users").child(userId).child("data");
     var snapshot = await userRef.get();
     if (snapshot.exists) {
       setState(() {
         user.add(snapshot.value as Map<dynamic, dynamic>);
 
       });
+      print("Data retrieved successfully");
+
+    }
+  } catch (error) {
+    print("Error retrieving data: $error");
+  }
+}
+List us=[];
+
+retrievedus() async {
+  try {
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? "";
+DatabaseReference userRef = FirebaseDatabase.instance.reference().child("users").child(userId);
+    var snapshot = await userRef.get();
+    if (snapshot.exists) {
+      setState(() {
+        us.add(snapshot.value as Map<dynamic, dynamic>);
+      });
+
+      Notificationfun();
       print("Data retrieved successfully");
     }
   } catch (error) {
@@ -43,9 +62,45 @@ void initState() {
   super.initState();
   setState(() {
     retrieved();
+    retrievedus() ;
   });
-
 }
+  String title="";
+  String notification1="";
+  String notification2="";
+
+  Notificationfun() async {
+    if (user.isNotEmpty && user[0]["Nutrient-tank"] != null && user[0]["Nutrient-tank"] <= 30) {
+      title = "Wrong";
+      notification1 = "Amount of water in the Nutrient Tank is less than 20%. Please fill the tank";
+    }
+    if (user.isNotEmpty && user[0]["main-tank"] != null && user[0]["main-tank"] <= 30) {
+      title = "Wrong";
+      notification2 = "Amount of water in the Main Tank is less than 20%. Please fill the tank";
+    }
+
+    getMessagetoupdate(title, notification1, notification2);
+  }
+
+  Future<void> getMessagetoupdate(t,n1,n2) async {
+    //FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DatabaseReference userRef = FirebaseDatabase.instance.reference().child("users").child(userId).child("notification");
+      await userRef.update({
+        "title": t,
+        "body1": n1,
+        "body2":n2,
+      });
+      retrieved();
+      print('Data updated successfully');
+    } catch (e) {
+      print('Error updating data: $e');
+    }
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
    
@@ -56,9 +111,9 @@ void initState() {
             surfaceTintColor:Colors.white,
            child: Column(children: [
             UserAccountsDrawerHeader(
-              accountName: user.isEmpty ||user==null?Text("loading"): Text("${user[0]["name"]}",style: TextStyle( fontSize:18.0,)), 
-              accountEmail: user.isEmpty ||user==null?Text("loading"): Text("${user[0]["email"]}",style: TextStyle( fontSize:18.0,)) ),
-             ListTile( title: Text("Home page"),leading:Icon(Icons.home),onTap: () {Navigator.of(context).pushNamed("home");},),ListTile(title: Text("About"),leading:Icon(Icons.search),onTap: () {},),ListTile(title: Text("Help"),leading:Icon(Icons.help),onTap: () { Navigator.of(context).pushNamed("request");},),ListTile(title: Text("log out"),leading:Icon(Icons.logout),onTap: () async {await FirebaseAuth.instance.signOut();Navigator.of(context).pushNamed("login");},),
+              accountName: us.isEmpty ||us==null?Text("...."): Text("${us[0]["name"]}",style: TextStyle( fontSize:18.0,)), 
+              accountEmail: us.isEmpty ||us==null?Text("...."): Text("${us[0]["email"]}",style: TextStyle( fontSize:18.0,)) ),
+             ListTile( title: Text("Home page"),leading:Icon(Icons.home),onTap: () {Navigator.of(context).pushNamed("home");},),ListTile(title: Text("About"),leading:Icon(Icons.search),onTap: () {Navigator.of(context).pushNamed("about");},),ListTile(title: Text("Help"),leading:Icon(Icons.help),onTap: () { Navigator.of(context).pushNamed("request");},),ListTile(title: Text("log out"),leading:Icon(Icons.logout),onTap: () async {await FirebaseAuth.instance.signOut();Navigator.of(context).pushNamed("login");},),
             ],
            ),
  ),
@@ -80,7 +135,7 @@ void initState() {
                color:    Color.fromARGB(255, 219, 236, 213),
                boxShadow: [const BoxShadow(color: Color.fromARGB(255, 59, 164, 63),blurRadius: 10,offset: Offset(0, 0))] ,   
                borderRadius: BorderRadius.circular(10),
-               image: const DecorationImage( fit: BoxFit.fill,image: AssetImage("images/asset/logo-512x512-1.png"))
+              image: const DecorationImage(scale:0.02 ,image: AssetImage("images/asset/11preview.png")),
             ),
            
            )
@@ -111,24 +166,34 @@ void initState() {
        )
     );
   }
-}
+
 
 Widget weatherBox(Weather _weather) {
+   CurrentWeatherPage();
  List status=[
       {
-        "name":"Light\n   Distance","measurement":"50","icon":"images/asset/lights.png"
+        "name":"Light\n   Intensity","measurement": user.isEmpty || user[0]["light intensity"] == null ? "" : user[0]["light intensity"],"icon":"images/asset/lights.png"
       },{
-        "name":"Environment\n   Temperature","measurement":"50","icon":"images/asset/warming.png"
+        "name":"Environment\n   Temperature","measurement":user.isEmpty || user[0]["temp"] == null ? "" : user[0]["temp"],"icon":"images/asset/warming.png"
       },{
-        "name":"Humidity","measurement":"50","icon":"images/asset/humidity.png"
+        "name":"Humidity","measurement":user.isEmpty || user[0]["humidity"] == null ? "" : user[0]["humidity"],"icon":"images/asset/humidity.png"
       },{
-        "name":"ph","measurement":"50","icon":"images/asset/ph.png"
+        "name":"ph","measurement":user.isEmpty || user[0]["ph"] == null ? "" : user[0]["ph"],"icon":"images/asset/ph.png"
       },
       {
-        "name":"Water Level","measurement":"30","icon":"images/asset/sea-level.png"
+        "name":"Mixture Tank","measurement":user.isEmpty || user[0]["mixture-tank"] == null ? "" : user[0]["mixture-tank"],"icon":"images/asset/sea-level.png"
       },
       {
-        "name":"Nutrient","measurement":"522","icon":"images/asset/nutrients.png"
+        "name":"Main Tank","measurement":user.isEmpty || user[0]["main-tank"] == null ? "" : user[0]["main-tank"],"icon":"images/asset/nutrients.png"
+      },
+      {
+        "name":"Nutrient Tank","measurement":user.isEmpty || user[0]["Nutrient-tank"] == null ? "" : user[0]["Nutrient-tank"],"icon":"images/asset/nutrients.png"
+      },
+      {
+        "name":"pipe-1","measurement":user.isEmpty || user[0]["pipe-1"] == null ? "" : user[0]["pipe-1"],"icon":"images/asset/nutrients.png"
+      },
+      {
+        "name":"pipe-2","measurement":user.isEmpty || user[0]["pipe-2"] == null ? "" : user[0]["pipe-2"],"icon":"images/asset/nutrients.png"
       }
     ];
  return Expanded(
@@ -213,7 +278,7 @@ const SizedBox(height: 10),
                 crossAxisCount: 2,mainAxisSpacing:10,crossAxisSpacing: 10),
                 children:List.generate (status.length, (index){
                   return Padding(
-                    
+                                           
                padding: EdgeInsets.all(0),
                child: Card( elevation: 22,
                //color: Color.fromARGB(255, 101, 97, 97),
@@ -222,14 +287,14 @@ const SizedBox(height: 10),
                     decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),color:  Colors.white,),
                     //color: Color.fromARGB(255, 199, 222, 199)
-                    height:50,
+                    height:40,
                     padding: EdgeInsets.all(6),
                     child: Column(
                       children: [
                const SizedBox(height: 20),
-                        Row(children: [
+                  Row(children: [
                           Image.asset(status[index]["icon"],width:30,),
-                          Text("   ${status[index]["name"]}",style: TextStyle(fontWeight: FontWeight.w600,fontSize:15,letterSpacing: 1.2,color: Color.fromARGB(221, 31, 30, 30))),
+                          Text("   ${status[index]["name"]}",style: TextStyle(fontWeight: FontWeight.w600,fontSize:17,color: Color.fromARGB(221, 31, 30, 30))),
                           ]),
                const SizedBox(height: 30),
                           Row(children: [
@@ -253,14 +318,11 @@ const SizedBox(height: 10),
 )])
   ); 
 
-
-
-
-
-
-
-
 }
+}
+
+
+
 Future getCurrentWeather() async {
   Weather weather=Weather(temp: 22, humidity: 55, low: 3, high:55, description: "description");
  String url22="https://api.openweathermap.org/data/2.5/weather?q=irbid&units=metric&appid=bb0fe449f2dbe4068c7e17b8ac1bf560";

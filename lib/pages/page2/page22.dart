@@ -22,66 +22,70 @@ class requests extends StatefulWidget {
 
 class _requestsState extends State<requests> {
 List user=[];
- var serverToken = "AAAAcJSyk-A:APA91bFY7fopJoBcRjmrTtlSQg_ewFFKjA0t4wZ7jj7cLNvgiTDIK4ghTSKC_qytQxBpF81vgRbDHFNogiD2WgsD46SziFyLRNTQYHCauDRLJI5Lm5qo-ZQmUj6VJDteA5YVtyy1vmEY";
+String title="";
+String notification1="";
+String notification2="";
 
+
+List us22=[];
+
+retrievedus22() async {
+  try {
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? "";
+    DatabaseReference userRef = FirebaseDatabase.instance.reference().child("users").child(userId);
+    var snapshot = await userRef.get();
+    if (snapshot.exists) {
+      setState(() {
+        us22.add(snapshot.value as Map<dynamic, dynamic>);
+      });
+
+      Notificationfun();
+      print("Data retrieved successfully");
+    }
+  } catch (error) {
+    print("Error retrieving data: $error");
+  }
+}
   @override
   void initState() {
     super.initState();
-   Notification();
-retrieved();
-    getMessagetoupdate();
+   retrieved();
+   retrievedus();
+    retrievedus22();
   }
-Notification()async{
-await sendNotification("Wrong", "Amount of water in the tank is  less than 20%.", "id");
+Notificationfun() async {
+  if (us.isNotEmpty && us[0]["Nutrient-tank"] != null && us[0]["Nutrient-tank"] <= 30) {
+    title = "Wrong";
+    notification1 = "Amount of water in the Nutrient Tank is less than 20%. Please fill the tank";
+  }
+  if (us.isNotEmpty && us[0]["main-tank"] != null && us[0]["main-tank"] <= 30) {
+    title = "Wrong";
+    notification2 = "Amount of water in the Main Tank is less than 20%. Please fill the tank";
+  }
 
+  getMessagetoupdate(title, notification1, notification2);
 }
 
-
-  Future<void> sendNotification(String title, String body, String id) async {
-    final url = Uri.parse('https://fcm.googleapis.com/fcm/send');
-    final headers = <String, String>{
-      "Content-Type": 'application/json',
-      "Authorization": 'key=$serverToken',
-    };
-    final message = {
-      'notification': {
-        'body': body.toString(),
-        'title': title.toString(),
-      },
-      'priority': 'high',
-      'data': {
-        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-      },
-      'to': await FirebaseMessaging.instance.getToken(),
-    };
-
-    final response = await http.post(url, headers: headers, body: jsonEncode(message));
-
-    if (response.statusCode == 200) {
-      print('Notification sent successfully');
-    } else {
-      print('Failed to send notification. Error: ${response.body}');
-    }
-  }
-
-
-
-  void getMessagetoupdate() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+  Future<void> getMessagetoupdate(t,n1,n2) async {
+    //FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       try {
         String userId = FirebaseAuth.instance.currentUser!.uid;
         DatabaseReference userRef = FirebaseDatabase.instance.reference().child("users").child(userId).child("notification");
    await userRef.update({
-        "title": message.notification?.title,
-        "body": message.notification?.body,
+        "title": t,
+        "body1": n1,
+        "body2":n2,
       });
         retrieved();
         print('Data updated successfully');
       } catch (e) {
         print('Error updating data: $e');
       }
-    });
+    
   }
+
+
+
  retrieved() async {
   try {
     String userId = FirebaseAuth.instance.currentUser?.uid ?? "";
@@ -101,7 +105,24 @@ await sendNotification("Wrong", "Amount of water in the tank is  less than 20%."
     print("Error retrieving data: $error");
   }
 }
+List us=[];
+retrievedus() async {
+  try {
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? "";
+DatabaseReference userRef = FirebaseDatabase.instance.reference().child("users").child(userId).child("data");
+    var snapshot = await userRef.get();
+    if (snapshot.exists) {
+      setState(() {
+        us.add(snapshot.value as Map<dynamic, dynamic>);
+        Notificationfun();
+      });
+      print("Data retrieved successfully");
 
+    }
+  } catch (error) {
+    print("Error retrieving data: $error");
+  }
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,8 +132,8 @@ await sendNotification("Wrong", "Amount of water in the tank is  less than 20%."
             surfaceTintColor:Colors.green,
            child: Column(children: [
             UserAccountsDrawerHeader(
-              accountName: user.isEmpty ||user==null?Text("loading"): Text("${user[0]["name"]}",style: TextStyle( fontSize:18.0,)), 
-              accountEmail: user.isEmpty ||user==null?Text("loading"): Text("${user[0]["email"]}",style: TextStyle( fontSize:18.0,)) ),
+              accountName: us22.isEmpty ||us22==null?Text("loading"): Text("${us22[0]["name"]}",style: TextStyle( fontSize:18.0,)),
+              accountEmail: us22.isEmpty ||us22==null?Text("loading"): Text("${us22[0]["email"]}",style: TextStyle( fontSize:18.0,)) ),
              ListTile( title: Text("Home page"),leading:Icon(Icons.home),onTap: () {Navigator.of(context).pushNamed("home");},),ListTile(title: Text("About"),leading:Icon(Icons.search),onTap: () {},),ListTile(title: Text("Help"),leading:Icon(Icons.help),onTap: () { Navigator.of(context).pushNamed("request");},),ListTile(title: Text("log out"),leading:Icon(Icons.logout),onTap: () {Navigator.of(context).pushNamed("login");},),
             ],
            ),
@@ -128,14 +149,14 @@ await sendNotification("Wrong", "Amount of water in the tank is  less than 20%."
     },
   ),
            actions: [
-            Container(height: 40,width: 40,
+            Container(height: 40,width:40,
             margin: const EdgeInsets.only(right: 20, top: 10, bottom: 5),
             // ignore: prefer_const_constructors
             decoration: BoxDecoration(
                color:    Color.fromARGB(255, 219, 236, 213),
-               boxShadow: [const BoxShadow(color: Color.fromARGB(255, 59, 164, 63),blurRadius: 10,offset: Offset(0, 0))] ,   
+               boxShadow: [const BoxShadow(color: Color.fromARGB(255, 59, 164, 63),blurRadius:5,offset: Offset(0, 0))] ,
                borderRadius: BorderRadius.circular(10),
-               image: const DecorationImage( fit: BoxFit.fill,image: AssetImage("images/asset/logo-512x512-1.png"))
+               image: const DecorationImage(scale:0.02 ,image: AssetImage("images/asset/11preview.png")),
             ),
            
            )
@@ -166,13 +187,14 @@ await sendNotification("Wrong", "Amount of water in the tank is  less than 20%."
            ],
          ),
          SizedBox (height:50.0,),
-         Column(
+          user.isEmpty || user==null || user[0]["body1"]==""?Text(""):
+          Column(
         children: [
            Container(
             width:600,
-            margin: EdgeInsets.all(20),
-                    decoration: BoxDecoration( 
-                      borderRadius: BorderRadius.circular(10),
+            margin: EdgeInsets.only(top: 20,left: 20,right: 20,bottom: 5),
+             decoration: BoxDecoration( 
+             borderRadius: BorderRadius.circular(10),
             gradient: LinearGradient (colors: [Color.fromARGB(255, 133, 220, 136),Color.fromARGB(255, 148, 202, 148)],
             begin:FractionalOffset (0.5,1)) // LinearGradient
           ),
@@ -183,13 +205,55 @@ await sendNotification("Wrong", "Amount of water in the tank is  less than 20%."
                      children: [
                        Icon(Icons.error,color: Colors.amber,), user.isEmpty ||user==null?Text("..."): Text("   ${user[0]["title"]}",style: TextStyle( fontSize:20.0,)),
                      ],
+                     
                    ),
                  ),
               
-               Container(padding: EdgeInsets.only(left: 10,bottom: 10),child: user.isEmpty ||user==null?Text("..."): Text("${user[0]["body"]}",style: TextStyle( fontSize:18.0,)))]))
+               Container(padding: EdgeInsets.only(left: 10,bottom: 10),
+                   margin: EdgeInsets.only(left: 7),
+                   child: user.isEmpty ||user==null?Text("..."): Text("${user[0]["body1"]}",style: TextStyle( fontSize:18.0,)))
+                       , SizedBox (height:10,)
+               
+               ]))
+          ,
+ 
 
         ],
-      ),
+      ), SizedBox (height:5),
+
+user.isEmpty || user==null || user[0]["body2"]==""?Text(""):
+          Column(
+            children: [
+              Container(
+                  width:600,
+                  margin: EdgeInsets.only(top: 20,left: 20,right: 20,bottom: 5),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      gradient: LinearGradient (colors: [Color.fromARGB(255, 133, 220, 136),Color.fromARGB(255, 148, 202, 148)],
+                          begin:FractionalOffset (0.5,1)) // LinearGradient
+                  ),
+                  child: Column(
+                      children: [
+                        Container(padding: EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              Icon(Icons.error,color: Colors.amber,), user.isEmpty ||user==null?Text("..."): Text("   ${user[0]["title"]}",style: TextStyle( fontSize:20.0,)),
+                            ],
+
+                          ),
+                        ),
+
+                        Container(padding: EdgeInsets.only(left: 10,bottom: 10),
+                            margin: EdgeInsets.only(left: 7),
+                            child: user.isEmpty ||user==null?Text("..."): Text("${user[0]["body2"]}",style: TextStyle( fontSize:18.0,)))
+                        , SizedBox (height:10,)
+
+                      ]))
+              ,
+
+
+            ],
+          ),
          ]
 ),),
     );
